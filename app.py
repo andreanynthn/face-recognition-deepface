@@ -10,7 +10,7 @@ from deepface import DeepFace
 def main():
     st.title("Face Recognition")
     image_file = st.file_uploader(
-        "Upload image", type = ["jpg"]
+        "Upload image", type = ["jpg", "jpeg"]
     )
 
 
