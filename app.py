@@ -5,22 +5,28 @@ import pandas as pd
 from PIL import Image
 import streamlit as st
 import mysql.connector
+from sqlalchemy import text
 from deepface import DeepFace
+from sqlalchemy import create_engine
 from deepface.commons import functions
 
 
 
 # setup database
-def init_connection():
-    return mysql.connector.connect(**st.secrets["mysql"])
+# def init_connection():
+#     return mysql.connector.connect(**st.secrets["mysql"])
+#
+# db = init_connection()
+# cursor = db.cursor()
+engine = create_engine("mysql://root:""@localhost:3306/image")
+cursor = engine.connect()
 
-db = init_connection()
-cursor = db.cursor()
 
 # model
 model = DeepFace.build_model("Facenet512")
 
 # for face registration
+@st.cache(allow_output_mutation=True)
 def inputImage(image, name):
     #     workdir = os.getcwd()
     facial_img = functions.preprocess_face(image, target_size = (160, 160), detector_backend = 'ssd')
@@ -30,21 +36,18 @@ def inputImage(image, name):
 
     # face name
     img_name = name
-
-    insert_query = "INSERT INTO face_image (face_name, embedding) VALUES (%s, %s)"
-    insert_args = (img_name, embedding.tobytes())
-    cursor.execute(insert_query, insert_args)
-
-    db.commit()
+    insert_query = "INSERT INTO face_image (face_name, embedding) VALUES (:face_name, :embedding)"
+    cursor.execute(text(insert_query),
+                   {"face_name":name, "embedding":embedding})
 
 
 # retrieve image
 def retrieveImage():
     retrieve_query = "SELECT face_name, embedding FROM face_image"
-    cursor.execute(retrieve_query)
+    results = cursor.execute(text(retrieve_query))
 
     instances = []
-    for result in cursor:
+    for result in results:
         img_name = result[0]
         embedding_bytes = result[1]
         embedding = np.frombuffer(embedding_bytes, dtype = 'float32')
@@ -94,7 +97,6 @@ def faceRecognition(image):
 def main():
 
     st.title("Face Recognition")
-
 
     menus = ["Face Registration", "Face Recognition"]
     select = st.sidebar.selectbox("Menu", menus)
