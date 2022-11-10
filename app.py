@@ -6,6 +6,7 @@ import pandas as pd
 from PIL import Image
 import streamlit as st
 import mysql.connector
+from deta import Deta
 from sqlalchemy import text
 from deepface import DeepFace
 from sqlalchemy import create_engine
@@ -19,15 +20,17 @@ from deepface.commons import functions
 #
 # db = init_connection()
 # cursor = db.cursor()
-engine = create_engine("mysql://root:""@localhost:3306/image", pool_pre_ping=True)
-cursor = engine.connect()
+# engine = create_engine("mysql://root:""@localhost:3306/image", pool_pre_ping=True)
+# cursor = engine.connect()
+deta = Deta(st.secrets["project_key"])
+db = deta.Base("Image")
 
 
 # model
 model = DeepFace.build_model("Facenet512")
 
 # for face registration
-@st.cache(allow_output_mutation=True)
+# @st.cache(allow_output_mutation=True)
 def inputImage(image, name):
     #     workdir = os.getcwd()
     facial_img = functions.preprocess_face(image, target_size = (160, 160), detector_backend = 'ssd')
@@ -37,20 +40,23 @@ def inputImage(image, name):
 
     # face name
     img_name = name
+    key = name
     insert_query = "INSERT INTO face_image (face_name, embedding) VALUES (:face_name, :embedding)"
-    cursor.execute(text(insert_query),
-                   {"face_name":name, "embedding":embedding})
+    db.put({
+        "img_name" : name,
+        "embedding" : embedding.tolist()
+    }, key=name)
 
 
 # retrieve image
 def retrieveImage():
-    retrieve_query = "SELECT face_name, embedding FROM face_image"
-    results = cursor.execute(text(retrieve_query))
+    retrieve = db.fetch()
+    results = retrieve.items
 
     instances = []
-    for result in results:
-        img_name = result[0]
-        embedding_bytes = result[1]
+    for i in range(len(results)):
+        img_name = results[i]["img_name"]
+        embedding_bytes = np.array(results[i]["embedding"])
         embedding = np.frombuffer(embedding_bytes, dtype = 'float32')
 
         instance = []
