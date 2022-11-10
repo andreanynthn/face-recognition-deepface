@@ -1,3 +1,4 @@
+MySQL-python
 numpy==1.23.2
 pandas==1.4.1
 Pillow==9.3.0
