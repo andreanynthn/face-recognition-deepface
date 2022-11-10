@@ -57,7 +57,7 @@ def retrieveImage():
     for i in range(len(results)):
         img_name = results[i]["img_name"]
         embedding_bytes = np.array(results[i]["embedding"])
-        embedding = np.frombuffer(embedding_bytes, dtype = 'float32')
+        embedding = np.array(embedding_bytes)
 
         instance = []
         instance.append(img_name)
