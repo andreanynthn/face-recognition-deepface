@@ -19,7 +19,7 @@ from deepface.commons import functions
 #
 # db = init_connection()
 # cursor = db.cursor()
-engine = create_engine("mysql+pymysql://root:""@localhost:3306/image", , pool_pre_ping=True)
+engine = create_engine("mysql+pymysql://root:""@localhost:3306/image", pool_pre_ping=True)
 cursor = engine.connect()
 
 
