@@ -143,13 +143,14 @@ def main():
                     st.error("Face not detected!")
                 else:
                     st.success("Face Detected!")
-                    predict = faceRecognition(img)[0]
+                    predict, dist = faceRecognition(img)
 
                     if predict is not None:
-                        st.success("Face is successfully recognized.")
-                        st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                        st.text(faceRecognition(img)[1])
-                        st.image(img)
+                        if dist <= 0.3:
+                            st.success("Face is successfully recognized.")
+                            st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+                            st.text(faceRecognition(img)[1])
+                            st.image(img)
                     else:
                         st.error("Face not registered.")
 
