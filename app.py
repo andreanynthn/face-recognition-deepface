@@ -1,5 +1,6 @@
 import mysql
 import string
+import pymysql
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -18,7 +19,7 @@ from deepface.commons import functions
 #
 # db = init_connection()
 # cursor = db.cursor()
-engine = create_engine("mysql+pymysql://root:""@localhost:3306/image")
+engine = create_engine("mysql+pymysql://root:""@localhost:3306/image", , pool_pre_ping=True)
 cursor = engine.connect()
 
 
