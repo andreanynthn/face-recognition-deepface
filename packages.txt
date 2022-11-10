@@ -1,5 +1,6 @@
 libgl1
 msodbcsql17
+mssql-tools
 python3-dev
 default-libmysqlclient-dev
 build-essential
