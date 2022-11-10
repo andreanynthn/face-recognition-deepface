@@ -151,6 +151,8 @@ def main():
                             st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
                             st.text(faceRecognition(img)[1])
                             st.image(img)
+                        else:
+                            st.error("Face not recognized.")
                     else:
                         st.error("Face not registered.")
 
