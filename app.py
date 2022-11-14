@@ -130,7 +130,7 @@ def main():
 
             if st.button("Process"):
                 img = np.array(image)
-                inputImage(img, username, select_model)
+                inputImage(img, username)
                 st.success("Face registered successfully!")
 
 
