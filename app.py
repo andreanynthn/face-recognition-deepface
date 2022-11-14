@@ -1,22 +1,17 @@
-import mysql
 import string
-import pymysql
 import numpy as np
 import pandas as pd
 from PIL import Image
 import streamlit as st
-import mysql.connector
 from deta import Deta
-from sqlalchemy import text
 from deepface import DeepFace
-from sqlalchemy import create_engine
 from deepface.commons import functions
 
 
 
 # setup database
 # def init_connection():
-#     return mysql.connector.connect(**st.secrets["mysql"])
+# #     return mysql.connector.connect(**st.secrets["mysql"])
 #
 # db = init_connection()
 # cursor = db.cursor()
@@ -38,10 +33,6 @@ def inputImage(image, name):
     # embedding
     embedding = model.predict(facial_img)[0]
 
-    # face name
-    img_name = name
-    key = name
-    insert_query = "INSERT INTO face_image (face_name, embedding) VALUES (:face_name, :embedding)"
     db.put({
         "img_name" : name,
         "embedding" : embedding.tolist()
@@ -68,6 +59,23 @@ def retrieveImage():
 
     return result_df
 
+# retrieve names
+def retrieveName():
+    retrieve = db.fetch()
+    results = retrieve.items
+
+    instances = []
+    for i in range(len(results)):
+        img_name = results[i]["img_name"]
+
+        instance = []
+        instance.append(img_name)
+        instances.append(instance)
+
+    name_df = pd.DataFrame(instances, columns = ["name"])
+
+    return name_df
+
 
 # cosine distance
 def findCosineDistance(df):
@@ -83,7 +91,7 @@ def findCosineDistance(df):
 
 # face recognition
 def faceRecognition(image):
-    image_preprocess = functions.preprocess_face(image, target_size = (160, 160), detector_backend='ssd')
+    image_preprocess = functions.preprocess_face(image, target_size = (160, 160), detector_backend='ssd', enforce_detection = False)
     image_target = model.predict(image_preprocess)[0].tolist()
     result = retrieveImage()
     image_target_duplicated = np.array([image_target]*result.shape[0])
@@ -106,8 +114,10 @@ def main():
 
     st.title("Face Recognition")
 
-    menus = ["Face Registration", "Face Recognition"]
+    menus = ["Face Registration", "Face Recognition", "List of Name"]
+    # models = ["Facenet512", "VGG-Face"]
     select = st.sidebar.selectbox("Menu", menus)
+    # select_model = st.sidebar.selectbox("Choose model", models)
 
     if select == "Face Registration":
         st.subheader("Face Registration")
@@ -120,7 +130,7 @@ def main():
 
             if st.button("Process"):
                 img = np.array(image)
-                inputImage(img, username)
+                inputImage(img, username, select_model)
                 st.success("Face registered successfully!")
 
 
@@ -154,6 +164,11 @@ def main():
                             st.error("Face not recognized.")
                     else:
                         st.error("Face not registered.")
+
+    if select == "List of Name":
+        st.subheader("List of Name")
+        name_df = retrieveName()
+        st.dataframe(name_df)
 
 if __name__ == '__main__':
     main()
