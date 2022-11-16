@@ -200,7 +200,7 @@ def main():
             video_processor_factory=VideoProcessor
         )
 
-        if ctx.video_transformer:
+        if ctx.state.playing:
             with ctx.video_transformer.frame_lock:
                 image = ctx.video_transformer.img
 
