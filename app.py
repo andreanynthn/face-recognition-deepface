@@ -205,7 +205,7 @@ def main():
                 image = ctx.video_transformer.img
 
                 if image is not None:
-                    img = image.to_ndarray(format="bgr24")
+                    img = image#.to_ndarray(format="bgr24")
 
                     try:
                         face_detection = DeepFace.detectFace(img_path = img,
