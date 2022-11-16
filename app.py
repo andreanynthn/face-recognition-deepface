@@ -1,6 +1,7 @@
 import cv2
 import av
 import string
+import threading
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -143,6 +144,13 @@ def callback(frame):
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 class VideoProcessor(VideoProcessorBase):
+
+    frame_lock: threading.Lock
+
+    def __init__(self) -> None:
+        self.frame_lock = threading.Lock()
+        self.img = None
+
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
         self.img = img
