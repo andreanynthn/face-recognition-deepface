@@ -190,8 +190,8 @@ def main():
             video_processor_factory=VideoProcessor
         )
 
-        if ctx.video_transformer:
-            image = ctx.video_transformer.img
+        if ctx.video_processor:
+            image = ctx.video_processor.img
 
             if image is not None:
                 img = image.to_ndarray(format="bgr24")
