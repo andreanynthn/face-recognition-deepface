@@ -1,3 +1,4 @@
+import cv2
 import string
 import numpy as np
 import pandas as pd
@@ -6,6 +7,7 @@ import streamlit as st
 from deta import Deta
 from deepface import DeepFace
 from deepface.commons import functions
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer, ClientSettings
 
 
 
@@ -23,6 +25,8 @@ db = deta.Base("Image")
 
 # model
 model = DeepFace.build_model("Facenet512")
+
+# FRAME_WINDOW = st.image([])
 
 # for face registration
 # @st.cache(allow_output_mutation=True)
@@ -109,6 +113,33 @@ def faceRecognition(image):
 
     return name, min(result['distance'])
 
+def callback(frame):
+    img = frame.to_ndarray(format="bgr24")
+
+    try:
+        face_detection = DeepFace.detectFace(img_path = img,
+                                             target_size = (224, 224),
+                                             detector_backend = 'ssd'
+                                             )
+    except:
+        st.error("Face not detected!")
+
+    else:
+        st.success("Face Detected!")
+        predict, dist = faceRecognition(img)
+
+    if predict is not None:
+        if dist <= 0.3:
+            st.success("Face is successfully recognized.")
+            st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+            st.image(img)
+        else:
+            st.error("Face not recognized.")
+    else:
+        st.error("Face not registered.")
+
+
+    return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 def main():
 
@@ -136,34 +167,50 @@ def main():
 
     if select == "Face Recognition":
         st.subheader("Face Recognition")
-        image_file = st.file_uploader(
-            "Upload image", type = ["jpg", "jpeg"]
+
+        # ----------- camera -------------------
+
+        WEBRTC_CLIENT_SETTINGS = ClientSettings(
+            rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+            media_stream_constraints={"video": True, "audio": False}
         )
 
-        if image_file is not None:
-            image = Image.open(image_file)
-            if st.button("Process"):
-                img = np.array(image)
-                try:
-                    face_detection = DeepFace.detectFace(img_path = img,
-                                                         target_size = (224, 224),
-                                                         detector_backend = 'ssd'
-                                                         )
-                except:
-                    st.error("Face not detected!")
-                else:
-                    st.success("Face Detected!")
-                    predict, dist = faceRecognition(img)
+        webrtc_streamer(
+            key="example",
+            client_settings=WEBRTC_CLIENT_SETTINGS,
+            video_frame_callback=callback
+        )
 
-                    if predict is not None:
-                        if dist <= 0.3:
-                            st.success("Face is successfully recognized.")
-                            st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                            st.image(img)
-                        else:
-                            st.error("Face not recognized.")
-                    else:
-                        st.error("Face not registered.")
+        # ----------- file upload --------------
+
+        # image_file = st.file_uploader(
+        #     "Upload image", type = ["jpg", "jpeg"]
+        # )
+        #
+        # if image_file is not None:
+        #     image = Image.open(image_file)
+        #     if st.button("Process"):
+        #         img = np.array(image)
+        #         try:
+        #             face_detection = DeepFace.detectFace(img_path = img,
+        #                                                  target_size = (224, 224),
+        #                                                  detector_backend = 'ssd'
+        #                                                  )
+        #         except:
+        #             st.error("Face not detected!")
+        #         else:
+        #             st.success("Face Detected!")
+        #             predict, dist = faceRecognition(img)
+        #
+        #             if predict is not None:
+        #                 if dist <= 0.3:
+        #                     st.success("Face is successfully recognized.")
+        #                     st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+        #                     st.image(img)
+        #                 else:
+        #                     st.error("Face not recognized.")
+        #             else:
+        #                 st.error("Face not registered.")
 
     if select == "List of Name":
         st.subheader("List of Name")
