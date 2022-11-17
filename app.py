@@ -176,7 +176,7 @@ def main():
             video_processor_factory=VideoProcessor
         )
 
-        if start = True:
+        if start == True:
             if ctx.video_transformer:
                 # if st.button("Start Recognition"):
                     with ctx.video_transformer.frame_lock:
