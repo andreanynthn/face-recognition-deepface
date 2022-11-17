@@ -141,7 +141,7 @@ def callback(frame):
     #     st.error("Face not registered.")
 
 
-    return av.VideoFrame.from_ndarray(img, format="bgr24")
+    return img
 
 class VideoProcessor(VideoProcessorBase):
 
