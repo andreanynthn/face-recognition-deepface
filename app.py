@@ -118,27 +118,27 @@ def faceRecognition(image):
 def callback(frame):
     img = frame.to_ndarray(format="bgr24")
 
-    try:
-        face_detection = DeepFace.detectFace(img_path = img,
-                                             target_size = (224, 224),
-                                             detector_backend = 'ssd'
-                                             )
-    except:
-        st.error("Face not detected!")
-
-    else:
-        st.success("Face Detected!")
-        predict, dist = faceRecognition(img)
-
-    if predict is not None:
-        if dist <= 0.3:
-            st.success("Face is successfully recognized.")
-            st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-            st.image(img)
-        else:
-            st.error("Face not recognized.")
-    else:
-        st.error("Face not registered.")
+    # try:
+    #     face_detection = DeepFace.detectFace(img_path = img,
+    #                                          target_size = (224, 224),
+    #                                          detector_backend = 'ssd'
+    #                                          )
+    # except:
+    #     st.error("Face not detected!")
+    #
+    # else:
+    #     st.success("Face Detected!")
+    #     predict, dist = faceRecognition(img)
+    #
+    # if predict is not None:
+    #     if dist <= 0.3:
+    #         st.success("Face is successfully recognized.")
+    #         st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+    #         st.image(img)
+    #     else:
+    #         st.error("Face not recognized.")
+    # else:
+    #     st.error("Face not registered.")
 
 
     return av.VideoFrame.from_ndarray(img, format="bgr24")
@@ -158,6 +158,10 @@ class VideoProcessor(VideoProcessorBase):
         self.img = img
 
         return av.VideoFrame.from_ndarray(img, format="bgr24")
+
+
+lock = threading.Lock()
+img_container = {"img": None}
 
 def main():
 
@@ -196,38 +200,65 @@ def main():
         ctx = webrtc_streamer(
             key="example",
             client_settings=WEBRTC_CLIENT_SETTINGS,
-            # video_frame_callback=callback,
-            video_processor_factory=VideoProcessor
+            video_frame_callback=callback
+            # video_processor_factory=VideoProcessor
         )
 
-        if ctx.video_transformer:
-            with ctx.video_transformer.frame_lock:
-                image = ctx.video_transformer.img
+        while ctx.state.playing:
+            with lock:
+                img = img_container["img"]
+            if img is None:
+                continue
+            try:
+                face_detection = DeepFace.detectFace(img_path = img,
+                                                     target_size = (224, 224),
+                                                     detector_backend = 'ssd'
+                                                     )
+            except:
+                st.error("Face not detected!")
 
-                if image is not None:
-                    img = image#.to_ndarray(format="bgr24")
+            else:
+                st.success("Face Detected!")
+                predict, dist = faceRecognition(img)
 
-                    try:
-                        face_detection = DeepFace.detectFace(img_path = img,
-                                                             target_size = (224, 224),
-                                                             detector_backend = 'ssd'
-                                                             )
-                    except:
-                        st.error("Face not detected!")
+            if predict is not None:
+                if dist <= 0.3:
+                    st.success("Face is successfully recognized.")
+                    st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+                    st.image(img)
+                else:
+                    st.error("Face not recognized.")
+            else:
+                st.error("Face not registered.")
 
-                    else:
-                        st.success("Face Detected!")
-                        predict, dist = faceRecognition(img)
-
-                        if predict is not None:
-                            if dist <= 0.3:
-                                st.success("Face is successfully recognized.")
-                                st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                                st.image(img)
-                            else:
-                                st.error("Face not recognized.")
-                        else:
-                            st.error("Face not registered.")
+        # if ctx.video_transformer:
+        #     with ctx.video_transformer.frame_lock:
+        #         image = ctx.video_transformer.img
+        #
+        #         if image is not None:
+        #             img = image#.to_ndarray(format="bgr24")
+        #
+        #             try:
+        #                 face_detection = DeepFace.detectFace(img_path = img,
+        #                                                      target_size = (224, 224),
+        #                                                      detector_backend = 'ssd'
+        #                                                      )
+        #             except:
+        #                 st.error("Face not detected!")
+        #
+        #             else:
+        #                 st.success("Face Detected!")
+        #                 predict, dist = faceRecognition(img)
+        #
+        #                 if predict is not None:
+        #                     if dist <= 0.3:
+        #                         st.success("Face is successfully recognized.")
+        #                         st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+        #                         st.image(img)
+        #                     else:
+        #                         st.error("Face not recognized.")
+        #                 else:
+        #                     st.error("Face not registered.")
 
 
 
