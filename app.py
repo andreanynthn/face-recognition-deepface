@@ -149,7 +149,7 @@ class VideoProcessor(VideoProcessorBase):
 
     def __init__(self) -> None:
         self.frame_lock = threading.Lock()
-        self.img = None
+        # self.img = None
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
@@ -200,7 +200,7 @@ def main():
             video_processor_factory=VideoProcessor
         )
 
-        if ctx.state.playing:
+        if ctx.video_transformer:
             with ctx.video_transformer.frame_lock:
                 image = ctx.video_transformer.img
 
