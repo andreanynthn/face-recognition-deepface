@@ -132,7 +132,7 @@ class VideoProcessor(VideoTransformerBase):
             self.img = img
         self.img = img
 
-        return img
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 
 lock = threading.Lock()
