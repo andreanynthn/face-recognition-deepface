@@ -184,30 +184,30 @@ def main():
             with ctx.video_transformer.frame_lock:
                 image = ctx.video_transformer.img
 
-                if image is not None:
-                    img = image#.to_ndarray(format="bgr24")
+            if image is not None:
+                img = image#.to_ndarray(format="bgr24")
 
-                    try:
-                        face_detection = DeepFace.detectFace(img_path = img,
-                                                             target_size = (224, 224),
-                                                             detector_backend = 'ssd'
-                                                             )
-                    except:
-                        st.error("Face not detected!")
+                try:
+                    face_detection = DeepFace.detectFace(img_path = img,
+                                                         target_size = (224, 224),
+                                                         detector_backend = 'ssd'
+                                                         )
+                except:
+                    st.error("Face not detected!")
 
-                    else:
-                        st.success("Face Detected!")
-                        predict, dist = faceRecognition(img)
+                else:
+                    st.success("Face Detected!")
+                    predict, dist = faceRecognition(img)
 
-                        if predict is not None:
-                            if dist <= 0.3:
-                                st.success("Face is successfully recognized.")
-                                st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                                st.image(img)
-                            else:
-                                st.error("Face not recognized.")
+                    if predict is not None:
+                        if dist <= 0.3:
+                            st.success("Face is successfully recognized.")
+                            st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+                            st.image(img)
                         else:
-                            st.error("Face not registered.")
+                            st.error("Face not recognized.")
+                    else:
+                        st.error("Face not registered.")
 
 
 
