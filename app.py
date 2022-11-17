@@ -147,9 +147,9 @@ class VideoProcessor(VideoProcessorBase):
 
     frame_lock: threading.Lock
 
-    def __init__(self) -> None:
+    def __init__(self, frame):
         self.frame_lock = threading.Lock()
-        # self.img = None
+        self.img = frame.to_ndarray(format="bgr24")
 
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
