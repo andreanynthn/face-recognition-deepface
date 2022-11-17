@@ -160,7 +160,7 @@ def main():
     if select == "Face Recognition":
         st.subheader("Face Recognition")
 
-        source = st.radio("Source", ("Camera", "File"))
+        source = st.radio("Select source:", ("Camera", "File"))
 
         # ----------- camera -------------------
 
