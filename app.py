@@ -113,10 +113,11 @@ def faceRecognition(image):
     name = result[result['distance'] == min(result['distance'])]['img_name']
     name = name.values[0].split('.')[0]
     end = time.time()
-    print(f"Dur: {end-start}S")
+    dur = end-start
+    # print(f"Dur: {end-start}S")
     # print(min(result['distance']))
 
-    return name, min(result['distance'])
+    return name, min(result['distance']),dur
 
 
 
@@ -193,12 +194,14 @@ def main():
 
                         else:
                             st.success("Face Detected!")
-                            predict, dist = faceRecognition(img)
+                            predict, dist, dur = faceRecognition(img)
 
                             if predict is not None:
                                 if dist <= 0.3:
                                     st.success("Face is successfully recognized.")
                                     st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+                                    st.text(dur)
+
                                     # st.image(img)
                                 else:
                                     st.error("Face not recognized.")
