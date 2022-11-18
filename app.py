@@ -200,7 +200,7 @@ def main():
                                 if dist <= 0.3:
                                     st.success("Face is successfully recognized.")
                                     st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                                    st.text(dur)
+                                    # st.text(dur)
 
                                     # st.image(img)
                                 else:
@@ -235,7 +235,7 @@ def main():
                             if dist <= 0.3:
                                 st.success("Face is successfully recognized.")
                                 st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
-                                st.text(durr)
+                                # st.text(durr)
                             else:
                                 st.error("Face not recognized.")
                         else:
