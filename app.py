@@ -1,4 +1,4 @@
-import cv2
+import time
 import av
 import string
 import threading
@@ -97,6 +97,7 @@ def findCosineDistance(df):
 
 # face recognition
 def faceRecognition(image):
+    start = time.time()
     image_preprocess = functions.preprocess_face(image, target_size = (160, 160), detector_backend='ssd', enforce_detection = False)
     image_target = model.predict(image_preprocess)[0].tolist()
     result = retrieveImage()
@@ -111,6 +112,8 @@ def faceRecognition(image):
     # get name
     name = result[result['distance'] == min(result['distance'])]['img_name']
     name = name.values[0].split('.')[0]
+    end = time.time()
+    print(f"Dur: {end-start}S")
     # print(min(result['distance']))
 
     return name, min(result['distance'])
