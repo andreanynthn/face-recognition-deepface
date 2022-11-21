@@ -176,9 +176,9 @@ def main():
                 video_processor_factory=VideoProcessor
             )
 
-            if ctx.video_transformer:
+            if ctx.video_receiver:
                 # if st.button("Start Recognition"):
-                img = ctx.video_receiver.get_frame()
+                img = ctx.video_receiver.get_frame(timeout = 1)
                     # with ctx.video_transformer.frame_lock:
                     #     image = ctx.video_transformer.img
                     #
