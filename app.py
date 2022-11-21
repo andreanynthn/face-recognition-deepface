@@ -221,8 +221,10 @@ def main():
                                     # st.image(img)
                                 else:
                                     st.error("Face not recognized.")
+                                    st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
                             else:
                                 st.error("Face not registered.")
+                                st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
 
         # ----------- file upload --------------
 
@@ -256,8 +258,10 @@ def main():
                                 st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
                             else:
                                 st.error("Face not recognized.")
+                                st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
                         else:
                             st.error("Face not registered.")
+                            st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
 
     if select == "List of Name":
         st.subheader("List of Name")
