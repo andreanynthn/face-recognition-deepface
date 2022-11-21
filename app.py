@@ -253,7 +253,7 @@ def main():
                                 st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
                                 # st.text(durr)
                                 st.text("Result")
-                                st.dataframe(result)
+                                st.dataframe(result.style.format({"similarity (%)" : "{:.2f}"}))
                             else:
                                 st.error("Face not recognized.")
                         else:
