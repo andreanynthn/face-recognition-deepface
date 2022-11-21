@@ -171,7 +171,7 @@ def main():
         if source == "Camera":
             ctx = webrtc_streamer(
                 key="example",
-                mode=WebRtcMode.SENDONLY,
+                # mode=WebRtcMode.SENDONLY,
                 rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
                 media_stream_constraints={"video": True, "audio": False},
                 video_processor_factory=VideoProcessor
