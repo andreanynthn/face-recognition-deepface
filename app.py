@@ -95,6 +95,19 @@ def findCosineDistance(df):
     return 1 - (a / (np.sqrt(b) * np.sqrt(c)))
 
 
+def findCosineSimilarity(df):
+    vector_1 = df['embedding']
+    vector_2 = df['target']
+    a = np.matmul(np.transpose(vector_1), vector_2)
+
+    b = np.matmul(np.transpose(vector_1), vector_1)
+    c = np.matmul(np.transpose(vector_2), vector_2)
+
+    similarity = a / (np.sqrt(b) * np.sqrt(c))
+    perc_similarity = round(similarity*100, 2)
+
+    return perc_similarity
+
 # face recognition
 def faceRecognition(image):
     start = time.time()
@@ -104,8 +117,9 @@ def faceRecognition(image):
     image_target_duplicated = np.array([image_target]*result.shape[0])
     result['target'] = image_target_duplicated.tolist()
 
-    # calculate distance and store to result_df
+    # calculate distance and similarity and store to result_df
     result['distance'] = result.apply(findCosineDistance, axis = 1)
+    result['similarity (%)'] = result.apply(findCosineSimilarity, axis = 1)
     result = result.sort_values(by = ['distance']).reset_index(drop = True)
     result = result.drop(columns = ["embedding", "target"])
 
@@ -117,7 +131,7 @@ def faceRecognition(image):
     # print(f"Dur: {end-start}S")
     # print(min(result['distance']))
 
-    return name, min(result['distance']),dur
+    return name, min(result['distance']),dur, result
 
 
 
@@ -194,12 +208,14 @@ def main():
 
                         else:
                             st.success("Face Detected!")
-                            predict, dist, dur = faceRecognition(img)
+                            predict, dist, dur, result = faceRecognition(img)
 
                             if predict is not None:
                                 if dist <= 0.3:
                                     st.success("Face is successfully recognized.")
                                     st.markdown(f'<h2 style="text-align:center">{string.capwords(predict)}</h2>', unsafe_allow_html=True)
+                                    st.text("Result")
+                                    st.dataframe(result)
                                     # st.text(dur)
 
                                     # st.image(img)
