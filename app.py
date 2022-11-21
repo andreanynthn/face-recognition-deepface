@@ -9,7 +9,7 @@ import streamlit as st
 from deta import Deta
 from deepface import DeepFace
 from deepface.commons import functions
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer, ClientSettings, VideoProcessorBase
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer, ClientSettings, VideoProcessorBase, WebRtcMode
 
 
 
@@ -171,6 +171,7 @@ def main():
         if source == "Camera":
             ctx = webrtc_streamer(
                 key="example",
+                mode=WebRtcMode.SENDONLY,
                 rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
                 media_stream_constraints={"video": True, "audio": False},
                 video_processor_factory=VideoProcessor
