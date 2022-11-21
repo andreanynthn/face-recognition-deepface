@@ -104,7 +104,7 @@ def findCosineSimilarity(df):
     c = np.matmul(np.transpose(vector_2), vector_2)
 
     similarity = a / (np.sqrt(b) * np.sqrt(c))
-    perc_similarity = round(similarity*100, 2)
+    perc_similarity = np.round(similarity*100, 2)
 
     return perc_similarity
 
