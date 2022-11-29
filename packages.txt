@@ -1,4 +1,7 @@
 libgl1
+ffmpeg
+libsm6
+libxext6
 msodbcsql17
 mssql-tools
 python3-dev

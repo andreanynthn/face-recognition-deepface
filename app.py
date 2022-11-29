@@ -94,7 +94,7 @@ def findCosineDistance(df):
 
     return 1 - (a / (np.sqrt(b) * np.sqrt(c)))
 
-
+# cosine similarity
 def findCosineSimilarity(df):
     vector_1 = df['embedding']
     vector_2 = df['target']
