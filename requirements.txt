@@ -1,4 +1,7 @@
-fastapi
+av
+deta
+streamlit
+streamlit-webrtc
 numpy==1.23.2
 pandas==1.4.1
 deepface==0.0.75

@@ -155,6 +155,10 @@ class VideoProcessor(VideoTransformerBase):
 
 def main():
 
+    st.set_page_config(
+        page_title = "Face Recognition"
+    )
+
     st.title("Face Recognition")
 
     menus = ["Face Registration", "Face Recognition", "List of Name"]
